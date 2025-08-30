@@ -297,8 +297,8 @@ export default function UserProfilePage() {
       // Update post votes count
       setPosts(prev => prev.map(post => {
         if (post.id === postId) {
-          const upvotes = post.upvotes || 0;
-          const downvotes = post.downvotes || 0;
+          let upvotes = post.upvotes || 0;
+          let downvotes = post.downvotes || 0;
           
           if (currentVote === 1) upvotes--;
           if (currentVote === -1) downvotes--;
