@@ -51,3 +51,4 @@ The setup script is designed to be safe and can be run multiple times. If you en
 ---
 
 **Run the setup script and your animal profiles should work!** 🐾
+

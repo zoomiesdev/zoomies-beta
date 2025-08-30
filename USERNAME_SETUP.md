@@ -133,3 +133,4 @@ If users still don't appear:
 2. Verify the username field was added successfully
 3. Check console logs for search debugging info
 4. Ensure RLS policies allow reading user_profiles
+

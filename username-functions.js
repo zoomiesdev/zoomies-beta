@@ -75,3 +75,4 @@ export const isUsernameAvailable = async (supabase, username) => {
     return false; // Assume unavailable on error
   }
 };
+

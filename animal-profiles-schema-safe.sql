@@ -301,3 +301,4 @@ END $$;
 
 -- Verify the setup
 SELECT 'Animal Profiles Schema Setup Complete!' as status;
+

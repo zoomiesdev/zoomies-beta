@@ -111,3 +111,4 @@ WHERE EXISTS (
 
 -- Summary
 SELECT 'DIAGNOSTIC COMPLETE' as message;
+

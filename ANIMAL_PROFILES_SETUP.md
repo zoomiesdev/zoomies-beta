@@ -204,3 +204,4 @@ SELECT * FROM pg_policies WHERE tablename = 'animal_profiles';
 ---
 
 The animal profiles system provides a robust foundation for organizations to manage their fundraising campaigns while maintaining security and performance. 🐾
+

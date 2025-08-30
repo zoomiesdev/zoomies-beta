@@ -59,3 +59,4 @@ SELECT
     created_at
 FROM user_profiles 
 WHERE user_id = auth.uid();
+

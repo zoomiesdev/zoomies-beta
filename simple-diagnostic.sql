@@ -53,3 +53,4 @@ SELECT
         THEN 'Your user profile is missing - refresh dashboard or run ensure-user-profile.sql'
         ELSE 'All tables exist - try creating animal profile again'
     END as next_step;
+

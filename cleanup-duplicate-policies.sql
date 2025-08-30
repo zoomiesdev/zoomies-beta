@@ -25,3 +25,4 @@ DROP POLICY IF EXISTS "Anyone can view published animal profiles" ON animal_prof
 
 -- Verify policies are removed
 SELECT 'Cleanup complete! All policies removed.' as status;
+

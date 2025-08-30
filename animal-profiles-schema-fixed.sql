@@ -304,3 +304,4 @@ END $$;
 
 -- Verify the setup
 SELECT 'Setup complete! All tables and policies created successfully.' as status;
+

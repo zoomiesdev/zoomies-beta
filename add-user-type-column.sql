@@ -47,3 +47,4 @@ ALTER TABLE user_profiles ALTER COLUMN user_type SET NOT NULL;
 SELECT column_name, data_type, is_nullable, column_default
 FROM information_schema.columns
 WHERE table_name = 'user_profiles' AND column_name = 'user_type';
+

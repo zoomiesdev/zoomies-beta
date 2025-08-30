@@ -4,6 +4,8 @@ import { PawPrint, Sun, Moon, LogIn, LogOut, Home, Users, ShieldCheck, Heart, Cr
 import { useTheme } from "../theme/useTheme";
 import { useAuth } from "../contexts/useAuth";
 import { Button } from "./ui.jsx";
+import ZoomiesLogo from "../assets/ZoomiesLogo.png";
+import ZoomiesLogoDark from "../assets/ZoomiesLogoDarkmode.png";
 
 export default function NavBar({ onOpenAuth }) {
   const { theme, toggle } = useTheme();
@@ -41,7 +43,7 @@ export default function NavBar({ onOpenAuth }) {
         <div className="spread">
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <img 
-              src={theme === 'dark' ? "/src/assets/ZoomiesLogoDarkmode.png" : "/src/assets/ZoomiesLogo.png"} 
+              src={theme === 'dark' ? ZoomiesLogoDark : ZoomiesLogo} 
               alt="Zoomies Logo" 
               style={{ 
                 width: "60px", 

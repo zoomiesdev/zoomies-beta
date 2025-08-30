@@ -73,3 +73,4 @@ If you still encounter issues:
 ---
 
 The fixed schema ensures a smooth setup process! 🐾
+

@@ -129,3 +129,4 @@ DROP INDEX IF EXISTS idx_user_profiles_user_type;
 - Only organizations can create animal profiles
 - Individual users cannot access organization-only features
 - User type is stored in both auth metadata and profile table for redundancy
+
