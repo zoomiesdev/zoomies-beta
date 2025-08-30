@@ -1732,48 +1732,74 @@ export default function CommunityPage({ onOpenAuth }){
             <Button variant="outline" onClick={fetchPosts} disabled={postsLoading}>
               <span style={{ fontSize: "18px", marginRight: "4px" }}>{postsLoading ? "⟳" : "⟳"}</span> Refresh
             </Button>
-            <Button onClick={openPostModal}><Plus size={16}/> Create Post</Button>
+            {user ? (
+              <Button onClick={openPostModal}><Plus size={16}/> Create Post</Button>
+            ) : (
+              <Button onClick={onOpenAuth}><Plus size={16}/> Login to Post</Button>
+            )}
           </div>
         </div>
 
         {/* Create Post Card */}
-        <Card style={{ padding: 16, cursor: "pointer" }} onClick={openPostModal}>
-          <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 12 }}>
-            {(() => {
-              // Get profile picture from database (same as edit profile modal)
-              const avatarUrl = userProfile?.avatar_url;
-              
-              // Check if the URL is complete and valid
-              if (avatarUrl && avatarUrl.trim() !== "" && !avatarUrl.endsWith('/') && avatarUrl.includes('.')) {
+        {user ? (
+          <Card style={{ padding: 16, cursor: "pointer" }} onClick={openPostModal}>
+            <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 12 }}>
+              {(() => {
+                // Get profile picture from database (same as edit profile modal)
+                const avatarUrl = userProfile?.avatar_url;
+                
+                // Check if the URL is complete and valid
+                if (avatarUrl && avatarUrl.trim() !== "" && !avatarUrl.endsWith('/') && avatarUrl.includes('.')) {
+                  return (
+                    <img src={avatarUrl} alt="" style={{ height: 40, width: 40, borderRadius: 999, objectFit: "cover" }} />
+                  );
+                }
+                
+                // Fallback to avatar placeholder with initials from database or user metadata
+                const displayName = userProfile?.full_name || user?.user_metadata?.full_name || user?.email;
+                const initial = displayName ? displayName[0]?.toUpperCase() : "U";
+                
                 return (
-                  <img src={avatarUrl} alt="" style={{ height: 40, width: 40, borderRadius: 999, objectFit: "cover" }} />
+                  <div style={{ height: 40, width: 40, borderRadius: 999, background: "var(--accent)", display: "grid", placeItems: "center", color: "white", fontSize: "16px", fontWeight: "600" }}>
+                    {initial}
+                  </div>
                 );
-              }
-              
-              // Fallback to avatar placeholder with initials from database or user metadata
-              const displayName = userProfile?.full_name || user?.user_metadata?.full_name || user?.email;
-              const initial = displayName ? displayName[0]?.toUpperCase() : "U";
-              
-              return (
-                <div style={{ height: 40, width: 40, borderRadius: 999, background: "var(--accent)", display: "grid", placeItems: "center", color: "white", fontSize: "16px", fontWeight: "600" }}>
-                  {initial}
-                </div>
-              );
-            })()}
-            <div style={{ flex: 1, cursor: "pointer" }}>
-              <Input 
-                placeholder="What's happening in the animal world?" 
-                style={{ cursor: "pointer" }}
-                readOnly
-              />
+              })()}
+              <div style={{ flex: 1, cursor: "pointer" }}>
+                <Input 
+                  placeholder="What's happening in the animal world?" 
+                  style={{ cursor: "pointer" }}
+                  readOnly
+                />
+              </div>
             </div>
-          </div>
-          <div className="muted" style={{ display: "flex", gap: 16, fontSize: 14 }}>
-            <span style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "4px" }}><Camera size={16}/> Photo/Video</span>
-            <span style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "4px" }}><MessageCircle size={16}/> Poll</span>
-            <span style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "4px" }}><Users size={16}/> Tag Community</span>
-          </div>
-        </Card>
+            <div className="muted" style={{ display: "flex", gap: 16, fontSize: "14" }}>
+              <span style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "4px" }}><Camera size={16}/> Photo/Video</span>
+              <span style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "4px" }}><MessageCircle size={16}/> Poll</span>
+              <span style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "4px" }}><Users size={16}/> Tag Community</span>
+            </div>
+          </Card>
+        ) : (
+          <Card style={{ padding: 16, cursor: "pointer" }} onClick={onOpenAuth}>
+            <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 12 }}>
+              <div style={{ height: 40, width: 40, borderRadius: 999, background: "var(--muted)", display: "grid", placeItems: "center", color: "var(--muted-foreground)", fontSize: "16px", fontWeight: "600" }}>
+                ?
+              </div>
+              <div style={{ flex: 1, cursor: "pointer" }}>
+                <Input 
+                  placeholder="Login to post..." 
+                  style={{ cursor: "pointer" }}
+                  readOnly
+                />
+              </div>
+            </div>
+            <div className="muted" style={{ display: "flex", gap: 16, fontSize: "14" }}>
+              <span style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "4px" }}><Camera size={16}/> Photo/Video</span>
+              <span style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "4px" }}><MessageCircle size={16}/> Poll</span>
+              <span style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "4px" }}><Users size={16}/> Tag Community</span>
+            </div>
+          </Card>
+        )}
 
             {/* Posts Feed */}
             {postsLoading ? (
