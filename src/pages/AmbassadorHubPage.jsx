@@ -34,6 +34,7 @@ export default function AmbassadorHubPage() {
             raised,
             status,
             image_url,
+            banner_url,
             created_at,
             updated_at
           `)
@@ -55,7 +56,7 @@ export default function AmbassadorHubPage() {
           location: "Animal Sanctuary",
           followers: 0,
           avatar: animal.image_url || `https://picsum.photos/seed/${animal.name}/120`,
-          banner: `https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=1400&auto=format&fit=crop`,
+          banner: animal.banner_url || `https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=1400&auto=format&fit=crop`,
           verified: false,
           goal: animal.goal,
           raised: animal.raised,

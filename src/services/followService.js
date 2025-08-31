@@ -2,11 +2,12 @@ import { supabase } from '../lib/supabase.js';
 
 export const followService = {
   // Follow a user
-  async followUser(followingId) {
+  async followUser(followingId, userId) {
     try {
       const { data, error } = await supabase
         .from('follows')
         .insert({
+          follower_id: userId,
           following_id: followingId
         })
         .select()
@@ -25,11 +26,12 @@ export const followService = {
   },
 
   // Unfollow a user
-  async unfollowUser(followingId) {
+  async unfollowUser(followingId, userId) {
     try {
       const { error } = await supabase
         .from('follows')
         .delete()
+        .eq('follower_id', userId)
         .eq('following_id', followingId);
 
       if (error) {
@@ -45,17 +47,21 @@ export const followService = {
   },
 
   // Check if current user is following another user
-  async isFollowing(followingId) {
+  async isFollowing(followingId, userId) {
     try {
       const { data, error } = await supabase
-        .rpc('is_following', { following_uuid: followingId });
+        .from('follows')
+        .select('id')
+        .eq('follower_id', userId)
+        .eq('following_id', followingId)
+        .single();
 
-      if (error) {
+      if (error && error.code !== 'PGRST116') { // PGRST116 is "not found"
         console.error('Error checking follow status:', error);
         throw error;
       }
 
-      return data;
+      return !!data; // Return true if data exists, false otherwise
     } catch (error) {
       console.error('Error in isFollowing:', error);
       return false;
@@ -65,17 +71,19 @@ export const followService = {
   // Get follower count for a user
   async getFollowerCount(userId) {
     try {
-      const { data, error } = await supabase
-        .rpc('get_follower_count', { user_uuid: userId });
+      const { count, error } = await supabase
+        .from('follows')
+        .select('*', { count: 'exact', head: true })
+        .eq('following_id', userId);
 
       if (error) {
         console.error('Error getting follower count:', error);
         throw error;
       }
 
-      return data || 0;
+      return count || 0;
     } catch (error) {
-      console.error('Error in getFollowerCount:', error);
+      console.error('Error getting follower count:', error);
       return 0;
     }
   },
@@ -83,17 +91,19 @@ export const followService = {
   // Get following count for a user
   async getFollowingCount(userId) {
     try {
-      const { data, error } = await supabase
-        .rpc('get_following_count', { user_uuid: userId });
+      const { count, error } = await supabase
+        .from('follows')
+        .select('*', { count: 'exact', head: true })
+        .eq('follower_id', userId);
 
       if (error) {
         console.error('Error getting following count:', error);
         throw error;
       }
 
-      return data || 0;
+      return count || 0;
     } catch (error) {
-      console.error('Error in getFollowingCount:', error);
+      console.error('Error getting following count:', error);
       return 0;
     }
   },
@@ -125,7 +135,7 @@ export const followService = {
 
       return data || [];
     } catch (error) {
-      console.error('Error in getFollowers:', error);
+      console.error('Error getting followers:', error);
       return [];
     }
   },
@@ -157,7 +167,7 @@ export const followService = {
 
       return data || [];
     } catch (error) {
-      console.error('Error in getFollowing:', error);
+      console.error('Error getting following:', error);
       return [];
     }
   }

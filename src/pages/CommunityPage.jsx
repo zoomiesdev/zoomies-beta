@@ -1482,9 +1482,7 @@ export default function CommunityPage({ onOpenAuth }){
                           </Link>
                           <FollowButton 
                             targetUserId={post.user_id} 
-                            variant="ghost" 
-                            size="sm" 
-                            showIcon={false}
+                            compact={true}
                             className=""
                           />
                         </div>
@@ -1864,9 +1862,7 @@ export default function CommunityPage({ onOpenAuth }){
                           </Link>
                           <FollowButton 
                             targetUserId={post.user_id} 
-                            variant="ghost" 
-                            size="sm" 
-                            showIcon={false}
+                            compact={true}
                             className=""
                           />
                         </div>

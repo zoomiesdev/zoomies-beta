@@ -61,6 +61,24 @@ export default function PublicProfilePage() {
           .eq('user_id', userId)
           .single();
 
+        // Get actual follower and following counts from follows table
+        const { count: followerCount, error: followerError } = await supabase
+          .from('follows')
+          .select('*', { count: 'exact', head: true })
+          .eq('following_id', userId);
+
+        const { count: followingCount, error: followingError } = await supabase
+          .from('follows')
+          .select('*', { count: 'exact', head: true })
+          .eq('follower_id', userId);
+
+        if (followerError) {
+          console.error('Error getting follower count:', followerError);
+        }
+        if (followingError) {
+          console.error('Error getting following count:', followingError);
+        }
+
         if (profileError) {
           // If no profile exists, create a basic one with just the user ID
           setProfileData({
@@ -77,7 +95,8 @@ export default function PublicProfilePage() {
             animals_helped: 0,
             sanctuaries_supported: 0,
             rating: 0,
-            followers: 0,
+            followers: followerCount || 0,
+            following: followingCount || 0,
             customization: {
               theme: "default",
               backgroundType: "color",
@@ -102,6 +121,8 @@ export default function PublicProfilePage() {
           
           setProfileData({
             ...profile,
+            followers: followerCount || 0,
+            following: followingCount || 0,
             customization: profile.customization || defaultCustomization
           });
         }
@@ -190,8 +211,8 @@ export default function PublicProfilePage() {
       // Update post votes count
       setPosts(prev => prev.map(post => {
         if (post.id === postId) {
-          let upvotes = post.upvotes || 0;
-          let downvotes = post.downvotes || 0;
+          const upvotes = post.upvotes || 0;
+          const downvotes = post.downvotes || 0;
           
           if (currentVote === 1) upvotes--;
           if (currentVote === -1) downvotes--;
@@ -444,23 +465,26 @@ export default function PublicProfilePage() {
                 <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
                   <Users size={14} /> {followers} followers
                 </span>
+                <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                  <Users size={14} /> {profileData.following || 0} following
+                </span>
               </div>
             </div>
-            <div style={{ display: "flex", gap: 8 }}>
-              <FollowButton 
-                targetUserId={userId} 
-                onFollowChange={(isFollowing) => {
-                  // Update local follower count when follow status changes
-                  setProfileData(prev => ({
-                    ...prev,
-                    followers: isFollowing ? (prev.followers || 0) + 1 : Math.max(0, (prev.followers || 0) - 1)
-                  }));
-                }}
-                variant="outline"
-                size="default"
-              />
-              <Button variant="ghost"><Share2 size={16}/> Share</Button>
-            </div>
+                          <div style={{ display: "flex", gap: 8 }}>
+                <FollowButton 
+                  targetUserId={userId} 
+                  onFollowChange={(isFollowing) => {
+                    // Update local follower count when follow status changes
+                    setProfileData(prev => ({
+                      ...prev,
+                      followers: isFollowing ? (prev.followers || 0) + 1 : Math.max(0, (prev.followers || 0) - 1)
+                    }));
+                  }}
+                  variant="outline"
+                  size="default"
+                />
+                <Button variant="ghost"><Share2 size={16}/> Share</Button>
+              </div>
           </div>
         </Card>
 
@@ -530,12 +554,18 @@ export default function PublicProfilePage() {
                 backdropFilter: 'none'
               }}>
                 <h3 style={{ marginTop: 0, color: customization.headerTextColor }}>Activity</h3>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, fontSize: 14 }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, fontSize: 14 }}>
                   <div>
                     <div style={{ fontSize: 24, fontWeight: "bold", color: customization.accentColor }}>
                       {followers}
                     </div>
                     <div className="muted" style={{ color: customization.bodyTextColor }}>Followers</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 24, fontWeight: "bold", color: customization.accentColor }}>
+                      {profileData.following || 0}
+                    </div>
+                    <div className="muted" style={{ color: customization.bodyTextColor }}>Following</div>
                   </div>
                   <div>
                     <div style={{ fontSize: 24, fontWeight: "bold", color: customization.accentColor }}>

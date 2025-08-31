@@ -46,6 +46,7 @@ export default function UserProfilePage() {
     banner: "",
     tags: [],
     followers: 0,
+    following: 0,
     animalsHelped: 0,
     sanctuariesSupported: 0,
     daysActive: 0
@@ -187,6 +188,31 @@ export default function UserProfilePage() {
           console.log('No profile data found, user may need to create profile');
         }
         
+        // Get actual follower and following counts from follows table
+        const { count: followerCount, error: followerError } = await supabase
+          .from('follows')
+          .select('*', { count: 'exact', head: true })
+          .eq('following_id', user.id);
+
+        const { count: followingCount, error: followingError } = await supabase
+          .from('follows')
+          .select('*', { count: 'exact', head: true })
+          .eq('follower_id', user.id);
+
+        if (followerError) {
+          console.error('Error getting follower count:', followerError);
+        }
+        if (followingError) {
+          console.error('Error getting following count:', followingError);
+        }
+
+        // Update profile data with actual counts
+        setProfileData(prev => ({
+          ...prev,
+          followers: followerCount || 0,
+          following: followingCount || 0
+        }));
+
         // Load user's posts
         await loadUserPosts();
         
@@ -1323,6 +1349,9 @@ export default function UserProfilePage() {
                 <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
                   <Users size={14} /> {profileData.followers || 0} followers
                 </span>
+                <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                  <Users size={14} /> {profileData.following || 0} following
+                </span>
               </div>
             </div>
             <div style={{ display: "flex", gap: 8 }}>
@@ -1414,12 +1443,18 @@ export default function UserProfilePage() {
                   backdropFilter: 'none'
                 }}>
                   <h3 style={{ marginTop: 0, color: customization.headerTextColor }}>Activity</h3>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, fontSize: 14 }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, fontSize: 14 }}>
                     <div>
                       <div style={{ fontSize: 24, fontWeight: "bold", color: customization.accentColor }}>
                         {profileData.followers}
                       </div>
                       <div className="muted" style={{ color: customization.bodyTextColor }}>Followers</div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 24, fontWeight: "bold", color: customization.accentColor }}>
+                        {profileData.following || 0}
+                      </div>
+                      <div className="muted" style={{ color: customization.bodyTextColor }}>Following</div>
                     </div>
                     <div>
                       <div style={{ fontSize: 24, fontWeight: "bold", color: customization.accentColor }}>
