@@ -155,6 +155,48 @@ export const communityService = {
     }
   },
 
+  // Delete a post (only by the post author)
+  async deletePost(postId, userId) {
+    try {
+      // First verify the user owns this post
+      const { data: post, error: fetchError } = await supabase
+        .from('community_posts')
+        .select('user_id')
+        .eq('id', postId)
+        .single();
+
+      if (fetchError) throw fetchError;
+      
+      if (post.user_id !== userId) {
+        throw new Error('You can only delete your own posts');
+      }
+
+      // Delete related data first (votes, comments)
+      await supabase
+        .from('post_votes')
+        .delete()
+        .eq('post_id', postId);
+
+      await supabase
+        .from('post_comments')
+        .delete()
+        .eq('post_id', postId);
+
+      // Delete the post
+      const { error } = await supabase
+        .from('community_posts')
+        .delete()
+        .eq('id', postId);
+
+      if (error) throw error;
+      
+      return { data: true, error: null };
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      return { data: null, error };
+    }
+  },
+
   // Vote on a post
   async voteOnPost(userId, postId, voteType) {
     try {
