@@ -15,7 +15,6 @@ export default function FollowButton({
   const { user } = useAuth();
   const [isFollowing, setIsFollowing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [followerCount, setFollowerCount] = useState(0);
 
   // Don't show follow button if user is not logged in or trying to follow themselves
   if (!user || user.id === targetUserId) {
@@ -32,17 +31,7 @@ export default function FollowButton({
       }
     };
 
-    const loadFollowerCount = async () => {
-      try {
-        const count = await followService.getFollowerCount(targetUserId);
-        setFollowerCount(count);
-      } catch (error) {
-        console.error('Error loading follower count:', error);
-      }
-    };
-
     checkFollowStatus();
-    loadFollowerCount();
   }, [targetUserId]);
 
   const handleFollowToggle = async () => {
@@ -53,19 +42,16 @@ export default function FollowButton({
       if (isFollowing) {
         await followService.unfollowUser(targetUserId);
         setIsFollowing(false);
-        setFollowerCount(prev => Math.max(0, prev - 1));
         if (onFollowChange) onFollowChange(false);
       } else {
         await followService.followUser(targetUserId);
         setIsFollowing(true);
-        setFollowerCount(prev => prev + 1);
         if (onFollowChange) onFollowChange(true);
       }
     } catch (error) {
       console.error('Error toggling follow:', error);
       // Revert the optimistic update
       setIsFollowing(!isFollowing);
-      setFollowerCount(prev => isFollowing ? prev + 1 : Math.max(0, prev - 1));
     } finally {
       setIsLoading(false);
     }
@@ -96,35 +82,21 @@ export default function FollowButton({
   };
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-      <Button
-        variant={getButtonVariant()}
-        size={size}
-        onClick={handleFollowToggle}
-        disabled={isLoading}
-        className={className}
-        style={{ 
-          minWidth: 'fit-content',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '6px'
-        }}
-      >
-        {getIcon()}
-        {getButtonText()}
-      </Button>
-      
-      {/* Follower count display */}
-      <div style={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        gap: '4px',
-        fontSize: '14px',
-        color: 'var(--muted-foreground)'
-      }}>
-        <Users size={14} />
-        <span>{followerCount}</span>
-      </div>
-    </div>
+    <Button
+      variant={getButtonVariant()}
+      size={size}
+      onClick={handleFollowToggle}
+      disabled={isLoading}
+      className={className}
+      style={{ 
+        minWidth: 'fit-content',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '6px'
+      }}
+    >
+      {getIcon()}
+      {getButtonText()}
+    </Button>
   );
 }
