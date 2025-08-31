@@ -1782,8 +1782,8 @@ export default function CommunityPage({ onOpenAuth }){
         ) : (
           <Card style={{ padding: 16, cursor: "pointer" }} onClick={onOpenAuth}>
             <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 12 }}>
-              <div style={{ height: 40, width: 40, borderRadius: 999, background: "var(--muted)", display: "grid", placeItems: "center", color: "var(--muted-foreground)", fontSize: "16px", fontWeight: "600" }}>
-                ?
+              <div style={{ height: 40, width: 40, borderRadius: 999, background: "var(--muted)", display: "grid", placeItems: "center", color: "var(--muted-foreground)" }}>
+                <Users size={20} />
               </div>
               <div style={{ flex: 1, cursor: "pointer" }}>
                 <Input 

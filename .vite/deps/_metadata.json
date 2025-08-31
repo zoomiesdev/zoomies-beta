@@ -1,0 +1,55 @@
+{
+  "hash": "146997b3",
+  "configHash": "200380e0",
+  "lockfileHash": "93b9ecb3",
+  "browserHash": "23fe9f3d",
+  "optimized": {
+    "react": {
+      "src": "../../node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "70426377",
+      "needsInterop": true
+    },
+    "react-dom/client": {
+      "src": "../../node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "f6de344f",
+      "needsInterop": true
+    },
+    "react-router-dom": {
+      "src": "../../node_modules/react-router-dom/dist/index.mjs",
+      "file": "react-router-dom.js",
+      "fileHash": "979e733a",
+      "needsInterop": false
+    },
+    "lucide-react": {
+      "src": "../../node_modules/lucide-react/dist/esm/lucide-react.js",
+      "file": "lucide-react.js",
+      "fileHash": "89d038c4",
+      "needsInterop": false
+    },
+    "@supabase/supabase-js": {
+      "src": "../../node_modules/@supabase/supabase-js/dist/module/index.js",
+      "file": "@supabase_supabase-js.js",
+      "fileHash": "a12125d9",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "chunk-42DVMF4H": {
+      "file": "chunk-42DVMF4H.js"
+    },
+    "chunk-J63SQRER": {
+      "file": "chunk-J63SQRER.js"
+    },
+    "browser-WNISQVJL": {
+      "file": "browser-WNISQVJL.js"
+    },
+    "chunk-GA4YEIWC": {
+      "file": "chunk-GA4YEIWC.js"
+    },
+    "chunk-PLDDJCW6": {
+      "file": "chunk-PLDDJCW6.js"
+    }
+  }
+}
