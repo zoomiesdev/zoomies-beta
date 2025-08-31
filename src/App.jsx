@@ -11,12 +11,17 @@ import PremiumPage from "./pages/PremiumPage.jsx";
 import UserProfilePage from "./pages/UserProfilePage.jsx";
 import PublicProfilePage from "./pages/PublicProfilePage.jsx";
 import OrganizationDashboard from "./pages/OrganizationDashboard.jsx";
+import SettingsPage from "./pages/SettingsPage.jsx";
 
-export default function App(){
+function AppContent() {
   const [authOpen, setAuthOpen] = useState(false);
   
+  const handleCloseAuth = () => {
+    setAuthOpen(false);
+  };
+  
   return (
-    <AuthProvider>
+    <>
       <div className="container">
         <NavBar onOpenAuth={() => setAuthOpen(true)} />
         <Routes>
@@ -29,12 +34,21 @@ export default function App(){
           <Route path="/profile" element={<UserProfilePage/>} />
           <Route path="/profile/:userId" element={<PublicProfilePage/>} />
           <Route path="/dashboard" element={<OrganizationDashboard/>} />
+          <Route path="/settings" element={<SettingsPage/>} />
         </Routes>
         <footer className="muted" style={{ textAlign:"center", padding:"40px 0", fontSize:12 }}>
           © {new Date().getFullYear()} Zoomies • Terms • Privacy
         </footer>
       </div>
-      <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
+      <AuthModal open={authOpen} onClose={handleCloseAuth} />
+    </>
+  );
+}
+
+export default function App(){
+  return (
+    <AuthProvider>
+      <AppContent />
     </AuthProvider>
   );
 }

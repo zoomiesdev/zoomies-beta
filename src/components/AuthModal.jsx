@@ -20,12 +20,14 @@ export default function AuthModal({ open, onClose }) {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, loading: authLoading } = useAuth();
 
   if (!open) return null;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (authLoading) return; // Prevent submission during auth state transitions
+    
     setError("");
     setMessage("");
     setLoading(true);
@@ -38,11 +40,14 @@ export default function AuthModal({ open, onClose }) {
           setError(error);
         } else {
           setMessage("Successfully signed in!");
+          // Wait for auth state to settle before closing
           setTimeout(() => {
-            onClose();
-            setFormData({ userType: "individual", fullName: "", organizationName: "", username: "", email: "", password: "", confirmPassword: "" });
-            setError("");
-            setMessage("");
+            if (!authLoading) {
+              onClose();
+              setFormData({ userType: "individual", fullName: "", organizationName: "", username: "", email: "", password: "", confirmPassword: "" });
+              setError("");
+              setMessage("");
+            }
           }, 1000);
         }
       } else {
@@ -171,10 +176,12 @@ export default function AuthModal({ open, onClose }) {
         } else {
           setMessage("Check your email to confirm your account!");
           setTimeout(() => {
-            onClose();
-            setFormData({ userType: "individual", fullName: "", organizationName: "", username: "", email: "", password: "", confirmPassword: "" });
-            setError("");
-            setMessage("");
+            if (!authLoading) {
+              onClose();
+              setFormData({ userType: "individual", fullName: "", organizationName: "", username: "", email: "", password: "", confirmPassword: "" });
+              setError("");
+              setMessage("");
+            }
           }, 3000);
         }
       }
@@ -186,6 +193,8 @@ export default function AuthModal({ open, onClose }) {
   };
 
   const handleInputChange = (e) => {
+    if (authLoading) return; // Prevent input changes during auth state transitions
+    
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
@@ -193,6 +202,8 @@ export default function AuthModal({ open, onClose }) {
   };
 
   const handleUserTypeChange = (userType) => {
+    if (authLoading) return; // Prevent user type changes during auth state transitions
+    
     setFormData(prev => ({ 
       ...prev, 
       userType,
@@ -203,6 +214,8 @@ export default function AuthModal({ open, onClose }) {
   };
 
   const toggleMode = () => {
+    if (authLoading) return; // Prevent mode switching during auth state transitions
+    
     setIsLogin(!isLogin);
     setError("");
     setMessage("");
@@ -210,7 +223,7 @@ export default function AuthModal({ open, onClose }) {
   };
 
   return (
-    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.5)", display: "grid", placeItems: "center", zIndex: 60 }} onClick={onClose}>
+    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.5)", display: "grid", placeItems: "center", zIndex: 60 }} onClick={authLoading ? undefined : onClose}>
       <Card className="center" style={{ 
         width: "min(560px, 92vw)", 
         padding: 24,
@@ -248,6 +261,20 @@ export default function AuthModal({ open, onClose }) {
           </div>
         )}
 
+        {authLoading && (
+          <div style={{ 
+            textAlign: "center", 
+            padding: "12px", 
+            background: "var(--accent)", 
+            color: "white", 
+            borderRadius: "8px",
+            fontSize: "14px",
+            marginBottom: "16px"
+          }}>
+            Authentication in progress...
+          </div>
+        )}
+        
         <form onSubmit={handleSubmit} style={{ width: "100%", display: "grid", gap: 10, marginTop: 10 }}>
           {!isLogin && (
             <>
@@ -365,13 +392,13 @@ export default function AuthModal({ open, onClose }) {
           )}
           
           <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
-            <Button type="submit" disabled={loading}>
+            <Button type="submit" disabled={loading || authLoading}>
               {loading ? "Loading..." : (isLogin ? "Sign in" : "Sign up")}
             </Button>
             <Button type="button" variant="outline" onClick={toggleMode}>
               {isLogin ? "Create account" : "Sign in instead"}
             </Button>
-            <Button type="button" variant="ghost" onClick={onClose}>Cancel</Button>
+            <Button type="button" variant="ghost" onClick={onClose} disabled={authLoading}>Cancel</Button>
           </div>
         </form>
       </Card>

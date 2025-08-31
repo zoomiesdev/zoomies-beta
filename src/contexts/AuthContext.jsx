@@ -92,6 +92,8 @@ export const AuthProvider = ({ children }) => {
   const signIn = async (email, password) => {
     try {
       console.log('Attempting sign in for:', email)
+      setLoading(true)
+      
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password
@@ -102,28 +104,41 @@ export const AuthProvider = ({ children }) => {
         throw error
       }
       
+      // Set user state immediately after successful sign in
+      setUser(data.user)
+      setError(null)
       console.log('Sign in successful:', data)
       return { data, error: null }
     } catch (error) {
       console.error('Sign in failed:', error)
       return { data: null, error: error.message }
+    } finally {
+      setLoading(false)
     }
   }
 
   const signOut = async () => {
     try {
       console.log('Attempting sign out')
+      // Set loading state to prevent UI flicker
+      setLoading(true)
+      
       const { error } = await supabase.auth.signOut()
       if (error) {
         console.error('Sign out error:', error)
         throw error
       }
       
+      // Clear user state immediately after successful sign out
+      setUser(null)
+      setError(null)
       console.log('Sign out successful')
       return { error: null }
     } catch (error) {
       console.error('Sign out failed:', error)
       return { error: error.message }
+    } finally {
+      setLoading(false)
     }
   }
 

@@ -9,17 +9,22 @@ import ZoomiesLogoDark from "../assets/ZoomiesLogoDarkmode.png";
 
 export default function NavBar({ onOpenAuth }) {
   const { theme, toggle } = useTheme();
-  const { user, signOut } = useAuth();
+  const { user, signOut, loading } = useAuth();
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const location = useLocation();
   
   const handleSignOut = async () => {
-    await signOut();
-    setProfileDropdownOpen(false);
+    try {
+      await signOut();
+      setProfileDropdownOpen(false);
+    } catch (error) {
+      console.error('Error during sign out:', error);
+      // Keep dropdown open if sign out fails
+    }
   };
 
-  // Close dropdown when clicking outside
+  // Close dropdown when clicking outside or when user state changes
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -32,6 +37,11 @@ export default function NavBar({ onOpenAuth }) {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  // Close dropdown when user state changes (login/logout)
+  useEffect(() => {
+    setProfileDropdownOpen(false);
+  }, [user]);
 
   return (
     <div style={{ zIndex: 100 }}>
@@ -238,7 +248,17 @@ export default function NavBar({ onOpenAuth }) {
               {theme === "dark" ? "Light" : "Dark"}
             </button>
             
-            {user ? (
+            {loading ? (
+              <div style={{ 
+                display: "flex", 
+                alignItems: "center", 
+                gap: 8, 
+                padding: "8px 12px",
+                color: "var(--muted)"
+              }}>
+                Loading...
+              </div>
+            ) : user ? (
               <div style={{ position: "relative" }} ref={dropdownRef}>
                 <button
                   onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
@@ -256,10 +276,10 @@ export default function NavBar({ onOpenAuth }) {
                     fontSize: "12px",
                     fontWeight: 600
                   }}>
-                    {user.user_metadata?.full_name?.[0] || user.email?.[0]?.toUpperCase() || 'U'}
+                    {user?.user_metadata?.full_name?.[0] || user?.email?.[0]?.toUpperCase() || 'U'}
                   </div>
                   <span style={{ fontSize: "14px" }}>
-                    {user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'}
+                    {user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'}
                   </span>
                   <ChevronDown size={14} style={{ 
                     transform: profileDropdownOpen ? "rotate(180deg)" : "rotate(0deg)",
@@ -268,7 +288,7 @@ export default function NavBar({ onOpenAuth }) {
                 </button>
 
                 {/* Profile Dropdown */}
-                {profileDropdownOpen && (
+                {profileDropdownOpen && user && (
                   <div style={{
                     position: "absolute",
                     top: "100%",
@@ -294,6 +314,12 @@ export default function NavBar({ onOpenAuth }) {
                           color: "inherit",
                           transition: "background 0.2s"
                         }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = "rgba(255,255,255,.08)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = "none";
+                        }}
                       >
                         <User size={16} />
                         View Profile
@@ -310,6 +336,12 @@ export default function NavBar({ onOpenAuth }) {
                           textDecoration: "none",
                           color: "inherit",
                           transition: "background 0.2s"
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = "rgba(255,255,255,.08)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = "none";
                         }}
                       >
                         <Crown size={16} />
@@ -330,12 +362,19 @@ export default function NavBar({ onOpenAuth }) {
                           color: "inherit",
                           transition: "background 0.2s"
                         }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = "rgba(255,255,255,.08)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = "none";
+                        }}
                       >
                         <User size={16} />
                         Edit Profile
                       </button>
                       <div style={{ height: 1, background: "var(--border)", margin: "4px 0" }} />
-                      <button
+                      <Link
+                        to="/settings"
                         onClick={() => setProfileDropdownOpen(false)}
                         style={{
                           display: "flex",
@@ -347,12 +386,19 @@ export default function NavBar({ onOpenAuth }) {
                           background: "none",
                           cursor: "pointer",
                           color: "inherit",
-                          transition: "background 0.2s"
+                          transition: "background 0.2s",
+                          textDecoration: "none"
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = "rgba(255,255,255,.08)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = "none";
                         }}
                       >
                         <Sun size={16} />
                         Settings
-                      </button>
+                      </Link>
                       <div style={{ height: 1, background: "var(--border)", margin: "4px 0" }} />
                       <button
                         onClick={handleSignOut}
@@ -367,6 +413,12 @@ export default function NavBar({ onOpenAuth }) {
                           cursor: "pointer",
                           color: "var(--accent)",
                           transition: "background 0.2s"
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = "rgba(255,255,255,.08)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = "none";
                         }}
                       >
                         <LogOut size={16} />
