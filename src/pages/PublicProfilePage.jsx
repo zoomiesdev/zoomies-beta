@@ -8,6 +8,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase.js";
 import { useTheme } from "../theme/useTheme";
 import { useAuth } from "../contexts/useAuth";
+import FollowButton from "../components/FollowButton.jsx";
 
 const onImgError = (e) => (e.currentTarget.src = "https://picsum.photos/seed/zoomies/1200/600");
 
@@ -446,6 +447,18 @@ export default function PublicProfilePage() {
               </div>
             </div>
             <div style={{ display: "flex", gap: 8 }}>
+              <FollowButton 
+                targetUserId={userId} 
+                onFollowChange={(isFollowing) => {
+                  // Update local follower count when follow status changes
+                  setProfileData(prev => ({
+                    ...prev,
+                    followers: isFollowing ? (prev.followers || 0) + 1 : Math.max(0, (prev.followers || 0) - 1)
+                  }));
+                }}
+                variant="outline"
+                size="default"
+              />
               <Button variant="ghost"><Share2 size={16}/> Share</Button>
             </div>
           </div>

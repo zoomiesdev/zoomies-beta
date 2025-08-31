@@ -5,6 +5,7 @@ import { useAuth } from "../contexts/useAuth";
 import { communityService } from "../services/communityService.js";
 import { supabase } from "../lib/supabase.js";
 import { Link } from "react-router-dom";
+import FollowButton from "../components/FollowButton.jsx";
 
 // Communities are now loaded from the database via communityService
 
@@ -1466,7 +1467,7 @@ export default function CommunityPage({ onOpenAuth }){
                     <div style={{ display: "flex", gap: 12, marginBottom: 12 }}>
                       {renderPostProfilePicture(post)}
                       <div style={{ flex: 1 }}>
-                        <div style={{ fontWeight: 600, fontSize: "14px" }}>
+                        <div style={{ fontWeight: 600, fontSize: "14px", display: "flex", alignItems: "center", gap: "8px" }}>
                           <Link 
                             to={`/profile/${post.user_id}`}
                             style={{ 
@@ -1479,6 +1480,13 @@ export default function CommunityPage({ onOpenAuth }){
                           >
                             {post.user?.user_metadata?.full_name || post.user?.email || "Anonymous User"}
                           </Link>
+                          <FollowButton 
+                            targetUserId={post.user_id} 
+                            variant="ghost" 
+                            size="sm" 
+                            showIcon={false}
+                            className=""
+                          />
                         </div>
                         <div className="muted" style={{ fontSize: "12px" }}>
                           {new Date(post.created_at).toLocaleDateString()} at {new Date(post.created_at).toLocaleTimeString()}
@@ -1841,7 +1849,7 @@ export default function CommunityPage({ onOpenAuth }){
                       <div style={{ display: "flex", gap: 12, marginBottom: 12 }}>
                         {renderPostProfilePicture(post)}
                       <div style={{ flex: 1 }}>
-                        <div style={{ fontWeight: 600, fontSize: "14px" }}>
+                        <div style={{ fontWeight: 600, fontSize: "14px", display: "flex", alignItems: "center", gap: "8px" }}>
                           <Link 
                             to={`/profile/${post.user_id}`}
                             style={{ 
@@ -1854,6 +1862,13 @@ export default function CommunityPage({ onOpenAuth }){
                           >
                             {post.user?.user_metadata?.full_name || post.user?.email || "Anonymous User"}
                           </Link>
+                          <FollowButton 
+                            targetUserId={post.user_id} 
+                            variant="ghost" 
+                            size="sm" 
+                            showIcon={false}
+                            className=""
+                          />
                         </div>
                         <div className="muted" style={{ fontSize: "12px" }}>
                           {new Date(post.created_at).toLocaleDateString()} at {new Date(post.created_at).toLocaleTimeString()}
